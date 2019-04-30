@@ -10,12 +10,13 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    private let knob = KnobControl()
+    private let knob = KnobControl(diameter: 130)
     private let slider = UISlider()
     
     private let knobSide: CGFloat = 130
     private let subviewsSidePadding: CGFloat = 23
     
+    // MARK: Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
       
@@ -25,8 +26,8 @@ class ViewController: UIViewController {
         knob.translatesAutoresizingMaskIntoConstraints = false
         knob.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         knob.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: knobSide/2 + subviewsSidePadding).isActive = true
-        knob.widthAnchor.constraint(equalToConstant: knobSide).isActive = true
-        knob.heightAnchor.constraint(equalToConstant: knobSide).isActive = true
+//        knob.widthAnchor.constraint(equalToConstant: knobSide).isActive = true
+//        knob.heightAnchor.constraint(equalToConstant: knobSide).isActive = true
         
         view.addSubview(slider)
         slider.translatesAutoresizingMaskIntoConstraints = false
