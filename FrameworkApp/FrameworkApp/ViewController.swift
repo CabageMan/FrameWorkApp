@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    private let knob = KnobController()
+    private let knob = KnobControl()
     private let slider = UISlider()
     
     private let knobSide: CGFloat = 130
@@ -34,6 +34,7 @@ class ViewController: UIViewController {
         slider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: subviewsSidePadding).isActive = true
         slider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -subviewsSidePadding).isActive = true
         slider.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
     }
 }
 
