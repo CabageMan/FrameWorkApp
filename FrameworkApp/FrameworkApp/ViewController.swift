@@ -29,6 +29,9 @@ class ViewController: UIViewController {
 //        knob.widthAnchor.constraint(equalToConstant: knobSide).isActive = true
 //        knob.heightAnchor.constraint(equalToConstant: knobSide).isActive = true
         
+        knob.linewidth = 4
+        knob.pointerLength = 10
+        
         view.addSubview(slider)
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
@@ -36,6 +39,11 @@ class ViewController: UIViewController {
         slider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -subviewsSidePadding).isActive = true
         slider.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
+        slider.addTarget(self, action: #selector(sliderChangeValue(sender:)), for: .valueChanged)
+    }
+    
+    @objc private func sliderChangeValue(sender: UISlider) {
+        knob.setValue(CGFloat(sender.value), isAnimated: true)
     }
 }
 

@@ -22,10 +22,34 @@ final class KnobControl: UIControl {
     
     func setValue(_ newValue: CGFloat, isAnimated: Bool = false) {
         value = min(maxValue, (max(minValue, newValue)))
+        
+        let angleRange = endAngle - startAngle
+        let valueRange = maxValue - minValue
+        let angleValue = (value - minValue) / valueRange * angleRange + startAngle
+        renderer.setPointerAngle(angleValue, animated: isAnimated)
     }
     
-    
     var isContinuous: Bool = true
+    
+    var linewidth: CGFloat {
+        get { return renderer.lineWidth }
+        set { renderer.lineWidth = newValue }
+    }
+    
+    var startAngle: CGFloat {
+        get { return renderer.startAngle }
+        set { renderer.startAngle = newValue }
+    }
+    
+    var endAngle: CGFloat {
+        get { return renderer.endAngle }
+        set { renderer.endAngle = newValue }
+    }
+    
+    var pointerLength: CGFloat {
+        get { return renderer.pointerLength }
+        set { renderer.pointerLength = newValue }
+    }
     
     // MARK: Initializers
     init(diameter: CGFloat) {
@@ -39,9 +63,6 @@ final class KnobControl: UIControl {
     }
     
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    
-    
 }
 
 private class KnobRender {
@@ -89,9 +110,21 @@ private class KnobRender {
     private (set) var pointerAngle: CGFloat = -(.pi * 11 / 8)
     
     func setPointerAngle(_ newAngle: CGFloat, animated: Bool = false) {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        pointerLayer.transform = CATransform3DMakeRotation(newAngle, 0, 0, 1)
         pointerAngle = newAngle
+        if animated {
+            let midAngleValue = (max(newAngle, pointerAngle) - min(newAngle, pointerAngle)) / 2
+                + min(newAngle, pointerAngle)
+            let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
+            animation.values = [pointerAngle, midAngleValue, newAngle]
+            animation.keyTimes = [0.0, 0.5, 1.0]
+            animation.timingFunctions = [CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)]
+            pointerLayer.add(animation, forKey: nil)
+        }
+        CATransaction.commit()
     }
-    
     
     // MARK: Initializers
     init() {
@@ -115,15 +148,14 @@ private class KnobRender {
         let bounds = trackLayer.bounds
         
         let pointer = UIBezierPath()
-        pointer.move(to: CGPoint(x: bounds.width - CGFloat(pointerLength)
-            - CGFloat(lineWidth) / 2, y: bounds.midY))
+        pointer.move(to: CGPoint(x: bounds.width - pointerLength - lineWidth/4, y: bounds.midY))
         pointer.addLine(to: CGPoint(x: bounds.width, y: bounds.midY))
         pointerLayer.path = pointer.cgPath
     }
     
     func updateBounds(_ bounds: CGRect) {
         trackLayer.bounds = bounds
-        trackLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+//        trackLayer.position = .zero
         updateTrackLayerPath()
         
         pointerLayer.bounds = trackLayer.bounds
